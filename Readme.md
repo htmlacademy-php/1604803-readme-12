@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
 * Студент: [Олег Карелин](https://up.htmlacademy.ru/php/12/user/1604803).
-* Наставник: [Дмитрий Шемин](https://up.htmlacademy.ru/php/12/user/1229503).
+* Наставник: [Данил Пятницев](https://up.htmlacademy.ru/php/12/user/1100441).
 
 ---
 
