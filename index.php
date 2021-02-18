@@ -39,6 +39,31 @@ $posts = [
     'avatar' => 'userpic.jpg',
     ],
 ]; 
+// создаём функцию для корректировки текста в текстовом посте ('type' => 'post-text')
+function cut_text ($text, $num_letters = 300) {
+    $text_arr = explode (" ", $text);   // преобразуем полученную строку в массив
+    $new_text_arr = [];                 // объявляем новый массив
+    $str_count = 0;                     // общая длина строки
+    foreach ($text_arr as $key => $value) { // перебираем элементы массива до заданного количества символов
+        $val_count = mb_strlen($value);     // считаем количество символов в элементе
+        $str_count = $str_count + $val_count;
+            if ($str_count < $num_letters) {
+                $new_text_arr[] = $value;
+            }
+            else {
+                $new_cat_text = implode(" ",$new_text_arr); // создаём новую сокращённую строку
+                break; // и прерываем foreach 
+            }
+    }
+    if ($str_count < $num_letters) {
+        echo ("<p>$text</p>");
+    }
+    else {
+        $new_cat_text .="...";
+        echo ("<p>$new_cat_text</p>");
+        echo ("<a class='post-text__more-link' href='#'>Читать далее</a>");
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
