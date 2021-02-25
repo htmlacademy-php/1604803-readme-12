@@ -56,14 +56,7 @@ function cut_text (string $text, int $num_letters = 300) {
                 break;      // и прерываем foreach 
             }
     }
-    if ($str_length < $num_letters) {
-        $flag = 0;
-        return array ($flag, $text);
-    }
-    else {
-        $flag = 1;
-        return array ($flag, $new_cat_text);
-    }
+    return $str_length < $num_letters ? $text : $new_cat_text;
 }
 ?>
 <!DOCTYPE html>
@@ -317,11 +310,11 @@ function cut_text (string $text, int $num_letters = 300) {
                 <?php endif; ?>
                 <?php if ($value['type'] == 'post-text') {
                         $text_flag = cut_text($value['content']); // получаем данные от функции проверки длины текста
-                            if ($text_flag[0] == 0) {
-                                echo ("<p>$text_flag[1]</p>");
-                            }
-                            if ($text_flag[0] == 1) {
-                                echo ("<p>$text_flag[1]</p>");
+                            if ($text_flag === $value['content']) {
+                                echo ("<p>{$value['content']}</p>");
+                            }    
+                            else {
+                                echo ("<p>$text_flag</p>");
                                 echo ("<a class='post-text__more-link' href='#'>Читать далее</a>");
                             }
                         }
