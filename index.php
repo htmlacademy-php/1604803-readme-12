@@ -39,6 +39,25 @@ $posts = [
     'avatar' => 'userpic.jpg',
     ],
 ]; 
+// создаём функцию для корректировки текста в текстовом посте ('type' => 'post-text')
+function cut_text (string $text, int $num_letters = 300) {
+    $text_arr = explode (" ", $text);   // преобразуем полученную строку в массив
+    $new_text_arr = [];                 // объявляем новый массив
+    $str_length = 0;                     // общая длина строки
+    foreach ($text_arr as $key => $value) { // перебираем элементы массива до заданного количества символов
+        $val_count = mb_strlen($value);     // считаем количество символов в элементе
+        $str_length += $val_count;
+            if ($str_length < $num_letters) {
+                $new_text_arr[] = $value;
+            }
+            else {
+                $new_cat_text = implode(" ",$new_text_arr); //создаём новую
+                $new_cat_text .="...";                      // сокращённую строку
+                break;      // и прерываем foreach 
+            }
+    }
+    return $str_length < $num_letters ? $text : $new_cat_text;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -289,9 +308,17 @@ $posts = [
                     </a>
                     </div>
                 <?php endif; ?>
-                <?php if ($value['type'] == 'post-text'): ?>
-                    <p><?=$value['content']; ?></p>
-                <?php endif; ?>
+                <?php if ($value['type'] == 'post-text') {
+                        $text_flag = cut_text($value['content']); // получаем данные от функции проверки длины текста
+                            if ($text_flag === $value['content']) {
+                                echo ("<p>{$value['content']}</p>");
+                            }    
+                            else {
+                                echo ("<p>$text_flag</p>");
+                                echo ("<a class='post-text__more-link' href='#'>Читать далее</a>");
+                            }
+                        }
+                ?>
                 </div>
                 <footer class="post__footer">
                     <div class="post__author">
