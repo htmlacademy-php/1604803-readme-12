@@ -2,6 +2,7 @@
 require_once('helpers.php'); // подключаем файл с функциями
 $is_auth = rand(0, 1);
 $user_name = 'Oleg';         // укажите здесь ваше имя
+$index = 0;//переменная-счётчик для функции generate_random_date
 date_default_timezone_set('Europe/Moscow'); // устанавливаем Московское время
 
 // добавляем массив карточек с данными для поста
@@ -62,43 +63,49 @@ function cut_text (string $text, int $num_letters = 300) {
     return $str_length < $num_letters ? $text : $new_cat_text;
 }
 
-//создаём функцию для вывода временного интервала
-//$date_blog дата публикации блога в формате unix
-//$date_curr текущая дата в формате unix
-function relative_date(int $date_blog, int $date_curr) {
-    $secs_in_minute = 60;         // секунд в минуте;
-    $secs_in_hour = 3600;         // секунд в часе
-    $secs_in_day = 86400;         // секунд в сутках
-    $secs_in_week = 604800;       // секунд в неделе
-    $secs_in_five_week = 3024000; //секунд в 5 неделях
+/**
+ * Функция возврата даты в относительном формате
+ * @param string $post_date дата публикации блога в виде строки
+ */
+function relative_date(string $post_date) {
+    //define('WEEK', 7); //Warning: Constant WEEK already defined in ...
+    $date_int = null;
+    $noun_plural_form = null;
 
-    $diff = $date_curr - $date_blog;
+    $dt_current = date_create('now');
+    $dt_date = date_create($post_date);
+    $dt_diff = date_diff($dt_current, $dt_date);
+    $date_diff_unix = strtotime(date_interval_format($dt_diff, '%Y-%M-%D %H:%I'));
 
-    if ($diff<$secs_in_hour) {
-        $diff_calc = ceil($diff / $secs_in_minute);
-        $plural_form = get_noun_plural_form($diff_calc, "минута", "минуты", "минут");
+    switch(true){
+        case ($date_diff_unix < strtotime ('00-00-00 01:00')):
+            $date_int = idate('i', $date_diff_unix);
+            $noun_plural_form = get_noun_plural_form($date_int, "минуту", "минуты", "минут");
+            break;
+        case ($date_diff_unix < strtotime('00-00-01 00:00')):
+            $date_int = idate('H', $date_diff_unix);
+            $noun_plural_form = get_noun_plural_form    ($date_int, "час", "часа", "часов");
+            break;
+        case ($date_diff_unix < strtotime('00-00-07 00:00')):
+            $date_int = idate('d', $date_diff_unix);
+            $noun_plural_form = get_noun_plural_form   ($date_int, "день", "дня", "дней");
+            break;
+        case ($date_diff_unix   < strtotime('00-01-00 00:00')):
+            $date_int = floor(idate('d', $date_diff_unix) /7); //вместо WEEK
+            $noun_plural_form = get_noun_plural_form   ($date_int, "неделю", "недели", "недель");
+            break;
+        default:
+            $date_int = idate('m', $date_diff_unix) + 1; //считает на 1 месяц меньше
+            $noun_plural_form = get_noun_plural_form    ($date_int, "месяц", "месяца", "месяцев");
+            break;
     }
-    if ($diff >= $secs_in_hour && $diff < $secs_in_day) {
-        $diff_calc = ceil($diff / $secs_in_hour);
-        $plural_form = get_noun_plural_form($diff_calc, "час", "часа", "часов");
-    }
-    if ($diff >= $secs_in_day && $diff < $secs_in_week) {
-        $diff_calc = ceil($diff / $secs_in_day);
-        $plural_form = get_noun_plural_form($diff_calc, "день", "дня", "дней");
-    }
-    if ($diff >= $secs_in_week && $diff < $secs_in_five_week) {
-        $diff_calc = ceil($diff / $secs_in_week);
-        $plural_form = get_noun_plural_form($diff_calc, "неделя", "недели", "недель");
-    }
-    if ($diff >= $secs_in_five_week) {
-        $diff_calc = ceil($diff / $secs_in_five_week);
-        $plural_form = get_noun_plural_form($diff_calc, "месяц", "месяца", "месяцев");
-    }
-    $relative_time = $diff_calc. " ". $plural_form. " ". "назад";
-    return $relative_time;
+    return "$date_int $noun_plural_form назад";
 }
 
-$page_content = include_template('main.php', ['posts' => $posts]);
+$page_content = include_template('main.php', [
+    'posts' => $posts,
+    'index' => $index
+    ]);
 $layout_content = include_template ('layout.php', [
     'contents' => $page_content,
     'title' => 'readme: популярное',
