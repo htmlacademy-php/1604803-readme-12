@@ -85,7 +85,7 @@
             </div>
         </div>
         <div class="popular__posts">
-        <!--итерируем массив и меняем вид карточек от типа данных --> 
+        <!--итерируем массив и меняем вид карточек от типа данных -->
         <?php foreach ($posts as $key => $value): ?>
             <article class="popular__post post <?=$value['type']; ?>">
                 <header class="post__header">
@@ -159,7 +159,11 @@
                                 <b class="post__author-name"><!--здесь имя пользоателя-->
                                 <?= htmlspecialchars($value['author']); ?>      <!--преобразование спецсимволов-->
                                 </b>
-                                <time class="post__time" datetime="">дата</time>
+            <?php
+            $post_date = generate_random_date($index); //генерируем случайную дату поста
+            $index++;
+            ?>
+                                <time class="post__time" datetime="<?=$post_date?>" title="<?=date_format(date_create($post_date), 'd.m.Y H:i');?>"><?=relative_date($post_date);?></time>
                             </div>
                         </a>
                     </div>
