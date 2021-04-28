@@ -3,18 +3,23 @@ CREATE DATABASE readme
     DEFAULT COLLATE utf8_general_ci;
 USE readme;
 CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    email CHAR(128) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
+    email VARCHAR(128) NOT NULL UNIQUE,
+    name VARCHAR(128) NOT NULL,
     password CHAR(64) NOT NULL,
-    avatar_path VARCHAR(255)
+    avatar_path VARCHAR(255),
+    INDEX(name(20))
+);
+CREATE TABLE type_contents (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    name CHAR(64),
+    filters_icon CHAR(64)
 );
 CREATE TABLE posts (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     user_id INT UNSIGNED,
     type_content_id INT UNSIGNED,
-    hashtag_id INT UNSIGNED,
     dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     title VARCHAR(255),
     content TEXT,
@@ -23,41 +28,44 @@ CREATE TABLE posts (
     video_path VARCHAR(255),
     link_path VARCHAR(255),
     show_count INT UNSIGNED,
-    like_count INT UNSIGNED
+    like_count INT UNSIGNED,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (type_content_id) REFERENCES type_contents(id),
+    INDEX(title(20))
 );
 CREATE TABLE comments (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     user_id INT UNSIGNED,
     post_id INT UNSIGNED,
     dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    content TEXT
+    content TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 CREATE TABLE posts_like (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     user_id INT UNSIGNED,
-    post_id INT UNSIGNED
+    post_id INT UNSIGNED,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 CREATE TABLE subscriptions (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     user_subscriber_id INT UNSIGNED,
-    user_id INT UNSIGNED
+    user_id INT UNSIGNED,
+    FOREIGN KEY (user_subscriber_id) REFERENCES users (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 CREATE TABLE messages (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     user_sender_id INT UNSIGNED,
     user_recipient_id INT UNSIGNED,
     dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    content TEXT
+    content TEXT,
+    FOREIGN KEY (user_sender_id) REFERENCES users (id),
+    FOREIGN KEY (user_recipient_id) REFERENCES users (id)
 );
 CREATE TABLE hashtags (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255)
 );
-CREATE TABLE type_contents (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name CHAR(64),
-    filters_icon CHAR(64)
-);
-CREATE INDEX user ON users(id);
-CREATE INDEX post ON posts(id);
-CREATE INDEX comment ON comments(id);
