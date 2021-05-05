@@ -67,7 +67,12 @@ CREATE TABLE messages (
 );
 CREATE TABLE hashtags (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+CREATE TABLE posts_hashtag (
+    PRIMARY KEY (post_id, hashtag_id),
     post_id INT UNSIGNED NOT NULL,
-    name VARCHAR(255) NOT NULL UNIQUE,
-    FOREIGN KEY (post_id) REFERENCES posts (id)
+    hashtag_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES posts (id),
+    FOREIGN KEY (hashtag_id) REFERENCES hashtags (id)
 );
