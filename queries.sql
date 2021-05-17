@@ -45,24 +45,29 @@ INSERT INTO comments (user_id, post_id, content)
 
 /* Запросы
 выводим список постов с сортировкой по популярности вместе с именами авторов и типом контента */
-SELECT title AS 'Название поста', u.name AS Автор, t.name AS 'Тип контетнта', show_count AS Просмотры
-    FROM posts AS p, users AS u, type_contents AS t
-        WHERE p.user_id = u.id AND p.type_content_id = t.id
+SELECT title AS post, u.name AS author, t.name AS type, show_count AS counter
+    FROM posts AS p
+        INNER JOIN users AS u ON p.user_id = u.id
+        INNER JOIN type_contents AS t ON p.type_content_id = t.id
             ORDER BY show_count DESC;
 
 -- получить список постов для конкретного пользователя
-SELECT title, name FROM posts, users
-    WHERE posts.user_id = users.id AND name = 'Лариса';
-SELECT title, name FROM posts, users
-    WHERE posts.user_id = users.id AND name = 'Владик';
+SELECT title FROM posts
+    WHERE user_id = 1;
+SELECT title FROM posts
+    WHERE user_id = 2;
+SELECT title FROM posts
+    WHERE user_id = 3;
 
 -- получить список комментариев для одного поста, в комментариях должен быть логин пользователя
-SELECT c.content, title, login
-    FROM posts AS p, comments AS c, users AS u 
-        WHERE c.user_id = u.id AND c.post_id = p.id AND p.id = 1;
-SELECT c.content, title, login
-    FROM posts AS p, comments AS c, users AS u 
-        WHERE c.user_id = u.id AND c.post_id = p.id AND p.id = 3;
+SELECT content, login 
+    FROM comments AS c 
+        INNER JOIN users AS u ON c.user_id = u.id
+            WHERE post_id = 1;
+SELECT content, login 
+    FROM comments AS c 
+        INNER JOIN users AS u ON c.user_id = u.id 
+            WHERE post_id = 3;
 
 -- добавить лайк посту
 INSERT INTO posts_like (user_id, post_id) VALUES
