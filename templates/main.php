@@ -110,13 +110,13 @@
                                 <h3><?= htmlspecialchars($value['title']); ?></h3>  <!--преобразование спецсимволов-->
                             </div>
                         </div>
-                        <span><?= htmlspecialchars($value['content']); ?></span>   <!--преобразование спецсимволов-->
+                        <span><?= htmlspecialchars($value['link_path']); ?></span>   <!--преобразование спецсимволов-->
                         </a>
                     </div>
                 <?php endif; ?>
                 <?php if ($value['type'] == 'post-photo'): ?>
                     <div class="post-photo__image-wrapper">
-                    <img src="img/<?=$value['content']; ?>" alt="Фото от пользователя" width="360" height="240">
+                    <img src="img/<?=$value['photo_path']; ?>" alt="Фото от пользователя" width="360" height="240">
                     </div>
                 <?php endif; ?>
                 <?php if ($value['type'] == 'post-video'): ?>
