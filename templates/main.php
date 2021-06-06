@@ -41,7 +41,18 @@
                             <span>Все</span>
                         </a>
                     </li>
-                    <li class="popular__filters-item filters__item">
+                    <?php foreach ($types as $key => $type): ?>
+                        <li class="popular__filters-item filters__item">
+                            <a class="filters__button filters__button--<?=$type['filters_icon']; ?> button" href="#">
+                                <span class="visually-hidden"><?=$type['name']; ?></span>
+                                <svg class="filters__icon" width="<?=$type['width']; ?>" height="<?=$type['height']; ?>">
+                                    <use xlink:href="#icon-filter-<?=$type['filters_icon']; ?>"></use>
+                                </svg>
+                        </a>
+                        </li>
+                    <?php endforeach; ?>
+
+<!--                <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--photo button" href="#">
                             <span class="visually-hidden">Фото</span>
                             <svg class="filters__icon" width="22" height="18">
@@ -81,25 +92,26 @@
                             </svg>
                         </a>
                     </li>
+-->
                 </ul>
             </div>
         </div>
         <div class="popular__posts">
         <!--итерируем массив и меняем вид карточек от типа данных -->
         <?php foreach ($posts as $key => $value): ?>
-            <article class="popular__post post <?=$value['type']; ?>">
+            <article class="popular__post post post-<?=$value['type']; ?>">
                 <header class="post__header">
                     <h2><?= htmlspecialchars($value['title']); ?></h2> <!--преобразование спецсимволов-->
                 </header>
                 <div class="post__main">
                     <!--здесь содержимое карточки-->
-                <?php if ($value['type'] == 'post-quote'): ?>
+                <?php if ($value['type'] == 'quote'): ?>
                     <blockquote>
                     <p><?= htmlspecialchars($value['content']); ?></p>  <!--преобразование спецсимволов-->
                     <cite>Неизвестный Автор</cite>
                     </blockquote>
                 <?php endif; ?>
-                <?php if ($value['type'] == 'post-link'): ?>
+                <?php if ($value['type'] == 'link'): ?>
                     <div class="post-link__wrapper">
                         <a class="post-link__external" href="http://" title="Перейти по ссылке">
                         <div class="post-link__info-wrapper">
@@ -110,16 +122,16 @@
                                 <h3><?= htmlspecialchars($value['title']); ?></h3>  <!--преобразование спецсимволов-->
                             </div>
                         </div>
-                        <span><?= htmlspecialchars($value['content']); ?></span>   <!--преобразование спецсимволов-->
+                        <span><?= htmlspecialchars($value['link_path']); ?></span>   <!--преобразование спецсимволов-->
                         </a>
                     </div>
                 <?php endif; ?>
-                <?php if ($value['type'] == 'post-photo'): ?>
+                <?php if ($value['type'] == 'photo'): ?>
                     <div class="post-photo__image-wrapper">
-                    <img src="img/<?=$value['content']; ?>" alt="Фото от пользователя" width="360" height="240">
+                    <img src="img/<?=$value['photo_path']; ?>" alt="Фото от пользователя" width="360" height="240">
                     </div>
                 <?php endif; ?>
-                <?php if ($value['type'] == 'post-video'): ?>
+                <?php if ($value['type'] == 'video'): ?>
                     <div class="post-video__block">
                     <div class="post-video__preview">
                         <?=embed_youtube_cover(/* вставьте ссылку на видео */); ?>
@@ -133,7 +145,7 @@
                     </a>
                     </div>
                 <?php endif; ?>
-                <?php if ($value['type'] == 'post-text') {
+                <?php if ($value['type'] == 'text') {
                         $text_flag = cut_text($value['content']); // получаем данные от функции проверки длины текста
                             if ($text_flag === $value['content']) {
                                 $text = htmlspecialchars($value['content']);    //преобразование спецсимволов

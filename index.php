@@ -1,10 +1,53 @@
 <?php
 require_once('helpers.php'); // подключаем файл с функциями
+$config = require_once('config.php'); // создаём файл конфигурации
+
+$db = $config['db']; // создаём массив из файла конфигурации для подключения к SQL
+
 $is_auth = rand(0, 1);
 $user_name = 'Oleg';         // укажите здесь ваше имя
 $index = 0;//переменная-счётчик для функции generate_random_date
+
 date_default_timezone_set('Europe/Moscow'); // устанавливаем Московское время
 
+$conn = mysqli_connect($db['host'], $db['user'], $db['password'], $db['database']); //устанавливаем соединение с SQL-базой
+
+if (!$conn) {
+    $error = mysqli_connect_error();
+    $contents = include_template('error.php', [
+        'error' => $error
+        ]);
+    print($contents);
+}
+mysqli_set_charset($conn, "utf8"); // устанавливаем кодировку
+
+$sql = "SELECT name, filters_icon, width, height FROM type_contents"; // SQL-запрос для получения типов контента
+$resalt = mysqli_query($conn, $sql);
+    if (!$resalt){
+    $error = mysqli_error($conn);
+    $contents = include_template('error.php', [
+        'error' => $error
+        ]);
+    print($contents);
+}
+$types = mysqli_fetch_all($resalt, MYSQLI_ASSOC);
+
+$sql = "SELECT title, filters_icon AS type , content, u.name AS author, photo_path, link_path, avatar_path AS avatar
+                FROM posts AS p 
+                    INNER JOIN users AS u ON p.user_id = u.id
+                    INNER JOIN type_contents AS t ON p.type_content_id = t.id
+                        ORDER BY show_count DESC;"; //SQL-запрос для получения списка постов и пользователей отсортированного по популярности
+$resalt = mysqli_query($conn, $sql);
+    if(!$resalt){
+        $error = mysqli_error($conn);
+        $contents = include_template('error.php', [
+        'error' => $error
+        ]);
+        print($contents);
+    }
+$posts = mysqli_fetch_all($resalt, MYSQLI_ASSOC);
+
+/**
 // добавляем массив карточек с данными для поста
 $posts = [
     [
@@ -42,7 +85,8 @@ $posts = [
     'author' => 'Владик',
     'avatar' => 'userpic.jpg',
     ],
-]; 
+];
+*/
 // создаём функцию для корректировки текста в текстовом посте ('type' => 'post-text')
 function cut_text (string $text, int $num_letters = 300) {
     $text_arr = explode (" ", $text);   // преобразуем полученную строку в массив
@@ -104,7 +148,8 @@ function relative_date(string $post_date) {
 
 $page_content = include_template('main.php', [
     'posts' => $posts,
-    'index' => $index
+    'types' => $types,
+    'index' => $index,
     ]);
 $layout_content = include_template ('layout.php', [
     'contents' => $page_content,
