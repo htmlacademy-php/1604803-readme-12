@@ -18,11 +18,10 @@ if (!$conn) {
         'error' => $error
         ]);
     print($contents);
-    //    print("ошибка подключения:" . mysqli_connect_error());
 }
 mysqli_set_charset($conn, "utf8"); // устанавливаем кодировку
 
-$sql = "SELECT filters_icon FROM type_contents"; // SQL-запрос для получения типов контента
+$sql = "SELECT name, filters_icon, width, height FROM type_contents"; // SQL-запрос для получения типов контента
 $resalt = mysqli_query($conn, $sql);
     if (!$resalt){
     $error = mysqli_error($conn);
@@ -30,7 +29,6 @@ $resalt = mysqli_query($conn, $sql);
         'error' => $error
         ]);
     print($contents);
-    //print("Ошибка MySQL: . $error");
 }
 $types = mysqli_fetch_all($resalt, MYSQLI_ASSOC);
 
@@ -46,7 +44,6 @@ $resalt = mysqli_query($conn, $sql);
         'error' => $error
         ]);
         print($contents);
-        //print("Ошибка MySQL:" . $error);
     }
 $posts = mysqli_fetch_all($resalt, MYSQLI_ASSOC);
 
@@ -151,7 +148,8 @@ function relative_date(string $post_date) {
 
 $page_content = include_template('main.php', [
     'posts' => $posts,
-    'index' => $index
+    'types' => $types,
+    'index' => $index,
     ]);
 $layout_content = include_template ('layout.php', [
     'contents' => $page_content,
