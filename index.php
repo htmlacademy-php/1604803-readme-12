@@ -21,7 +21,7 @@ if (!$conn) {
 }
 mysqli_set_charset($conn, "utf8"); // устанавливаем кодировку
 
-$sql = "SELECT name, filters_icon, width, height FROM type_contents"; // SQL-запрос для получения типов контента
+$sql = "SELECT id, name, filters_icon, width, height FROM type_contents"; // SQL-запрос для получения типов контента
 $resalt = mysqli_query($conn, $sql);
     if (!$resalt){
     $error = mysqli_error($conn);
@@ -32,11 +32,20 @@ $resalt = mysqli_query($conn, $sql);
 }
 $types = mysqli_fetch_all($resalt, MYSQLI_ASSOC);
 
+$id = 0;// переменная id типа контента
+
+if (isset($_GET['id'])){
+    $id = $_GET['id'];
+    $slct = "WHERE t.id = $id"; // список постов отсортированный по типу контента
+} else {
+    $slct = "ORDER BY show_count DESC"; // список всех постов и пользователей отсортированный по популярности
+}
 $sql = "SELECT title, filters_icon AS type , content, u.name AS author, photo_path, link_path, avatar_path AS avatar
                 FROM posts AS p 
                     INNER JOIN users AS u ON p.user_id = u.id
                     INNER JOIN type_contents AS t ON p.type_content_id = t.id
-                        ORDER BY show_count DESC;"; //SQL-запрос для получения списка постов и пользователей отсортированного по популярности
+                        $slct;";
+
 $resalt = mysqli_query($conn, $sql);
     if(!$resalt){
         $error = mysqli_error($conn);
@@ -150,6 +159,7 @@ $page_content = include_template('main.php', [
     'posts' => $posts,
     'types' => $types,
     'index' => $index,
+    'id' => $id,
     ]);
 $layout_content = include_template ('layout.php', [
     'contents' => $page_content,
