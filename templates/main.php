@@ -106,7 +106,9 @@
         <?php foreach ($posts as $key => $value): ?>
             <article class="popular__post post post-<?=$value['type']; ?>">
                 <header class="post__header">
-                    <h2><?= htmlspecialchars($value['title']); ?></h2> <!--преобразование спецсимволов-->
+                    <a href="post.php?id=<?=$value['id']; ?>">
+                        <h2><?= htmlspecialchars($value['title']); ?></h2> <!--преобразование спецсимволов-->
+                    </a>
                 </header>
                 <div class="post__main">
                     <!--здесь содержимое карточки-->

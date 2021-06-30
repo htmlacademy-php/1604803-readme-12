@@ -40,7 +40,7 @@ if (isset($_GET['id'])){
 } else {
     $slct = "ORDER BY show_count DESC"; // список всех постов и пользователей отсортированный по популярности
 }
-$sql = "SELECT title, filters_icon AS type , content, u.name AS author, photo_path, link_path, avatar_path AS avatar
+$sql = "SELECT p.id, title, filters_icon AS type , content, u.name AS author, photo_path, link_path, avatar_path AS avatar
                 FROM posts AS p 
                     INNER JOIN users AS u ON p.user_id = u.id
                     INNER JOIN type_contents AS t ON p.type_content_id = t.id
