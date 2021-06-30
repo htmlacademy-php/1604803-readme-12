@@ -37,18 +37,23 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all filters__button--active" href="#">
+                        <?php if ($id) {$style_all = ''; } else
+                                                        {$style_all = 'active';}
+                        ?>
+                        <a class="filters__button filters__button--ellipse filters__button--all filters__button--<?=$style_all; ?>" href="/index.php">
                             <span>Все</span>
                         </a>
                     </li>
-                    <?php foreach ($types as $key => $type): ?>
+                    <?php foreach ($types as $type): ?>
                         <li class="popular__filters-item filters__item">
-                            <a class="filters__button filters__button--<?=$type['filters_icon']; ?> button" href="#">
+                        <?php if ($type['id'] == $id) $style = 'active'; ?>
+                            <a class="filters__button filters__button--<?=$type['filters_icon']; ?> filters__button--<?=$style; ?> button" href="/index.php?id=<?=$type['id']; ?>">
                                 <span class="visually-hidden"><?=$type['name']; ?></span>
                                 <svg class="filters__icon" width="<?=$type['width']; ?>" height="<?=$type['height']; ?>">
                                     <use xlink:href="#icon-filter-<?=$type['filters_icon']; ?>"></use>
                                 </svg>
                         </a>
+                        <?php $style=''; ?>
                         </li>
                     <?php endforeach; ?>
 
@@ -101,7 +106,9 @@
         <?php foreach ($posts as $key => $value): ?>
             <article class="popular__post post post-<?=$value['type']; ?>">
                 <header class="post__header">
-                    <h2><?= htmlspecialchars($value['title']); ?></h2> <!--преобразование спецсимволов-->
+                    <a href="post.php?id=<?=$value['id']; ?>">
+                        <h2><?= htmlspecialchars($value['title']); ?></h2> <!--преобразование спецсимволов-->
+                    </a>
                 </header>
                 <div class="post__main">
                     <!--здесь содержимое карточки-->
